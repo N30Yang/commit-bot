@@ -1,0 +1,33 @@
+name: Commit Bot
+
+on:
+  schedule:
+    - cron: "0 22 * * *"
+      timezone: "Pacific/Auckland"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: commit-bot
+  cancel-in-progress: false
+
+jobs:
+  commit:
+    runs-on: ubuntu-latest
+    env:
+      TZ: Pacific/Auckland
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: main
+
+      - name: Configure commit identity
+        run: |
+          git config user.name "N30"
+          git config user.email "143488179+N30Yang@users.noreply.github.com"
+
+      - name: Create and push activity commit
+        run: /bin/bash ./bot.sh
